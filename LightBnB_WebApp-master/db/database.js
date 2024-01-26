@@ -144,18 +144,14 @@ const getAllProperties = (options, limit = 10) => {
   console.log(queryString, queryParams);
   // 6
   return pool.query(queryString, queryParams).then((res) => res.rows);
-
-
-  // return pool
-  //   .query(`SELECT * FROM properties LIMIT $1`, [limit])
-  //   .then((result) => {
-  //     console.log(result.rows);
-  //     return result.rows;
-  //   })
-  //   .catch((err) => {
-  //     console.log(err.message);
-  //   });
 };
+// getAllProperties({
+//   city: 'Vancouver',
+//   owner_id: 1,
+//   minimum_rating: 4,
+//   minimum_price_per_night: 100,
+//   maximum_price_per_night: 200
+// }, 10);
 
 /**
  * Add a property to the database
@@ -163,11 +159,107 @@ const getAllProperties = (options, limit = 10) => {
  * @return {Promise<{}>} A promise to the property.
  */
 const addProperty = function(property) {
-  const propertyId = Object.keys(properties).length + 1;
-  property.id = propertyId;
-  properties[propertyId] = property;
-  return Promise.resolve(property);
+  const queryParams = [];
+  let queryString = `
+  INSERT INTO properties (
+    owner_id, 
+    title, 
+    description, 
+    thumbnail_photo_url, 
+    cover_photo_url, 
+    cost_per_night, 
+    street, 
+    city, 
+    province, 
+    post_code, 
+    country, 
+    parking_spaces, 
+    number_of_bathrooms, 
+    number_of_bedrooms)
+    VALUES (
+  `;
+  if (property.owner_id) {
+    queryParams.push(property.owner_id);
+    queryString += `$${queryParams.length}, `;
+  }
+  if (property.title) {
+    queryParams.push(property.title);
+    queryString += `$${queryParams.length}, `;
+  }
+  if (property.description) {
+    queryParams.push(property.description);
+    queryString += `$${queryParams.length}, `;
+  }
+  if (property.thumbnail_photo_url) {
+    queryParams.push(property.thumbnail_photo_url);
+    queryString += `$${queryParams.length}, `;
+  }
+  if (property.cover_photo_url) {
+    queryParams.push(property.cover_photo_url);
+    queryString += `$${queryParams.length}, `;
+  }
+  if (property.cost_per_night) {
+    queryParams.push(property.cost_per_night);
+    queryString += `$${queryParams.length}, `;
+  }
+  if (property.street) {
+    queryParams.push(property.street);
+    queryString += `$${queryParams.length}, `;
+  }
+  if (property.city) {
+    queryParams.push(property.city);
+    queryString += `$${queryParams.length}, `;
+  }
+  if (property.province) {
+    queryParams.push(property.province);
+    queryString += `$${queryParams.length}, `;
+  }
+  if (property.post_code) {
+    queryParams.push(property.post_code);
+    queryString += `$${queryParams.length}, `;
+  }
+  if (property.country) {
+    queryParams.push(property.country);
+    queryString += `$${queryParams.length}, `;
+  }
+  if (property.parking_spaces) {
+    queryParams.push(property.parking_spaces);
+    queryString += `$${queryParams.length}, `;
+  }
+  if (property.number_of_bathrooms) {
+    queryParams.push(property.number_of_bathrooms);
+    queryString += `$${queryParams.length}, `;
+  }
+  if (property.number_of_bedrooms) {
+    queryParams.push(property.number_of_bedrooms);
+    queryString += `$${queryParams.length}`;
+  }
+  queryString += `) RETURNING *;`;
+  console.log(queryString, queryParams);
+  return pool.query(queryString, queryParams).then((res) => res.rows);
+
+
+  // const propertyId = Object.keys(properties).length + 1;
+  // property.id = propertyId;
+  // properties[propertyId] = property;
+  // return Promise.resolve(property);
 };
+// addProperty({
+//   owner_id: 1,
+//   title: 'Beautiful House',
+//   description: 'This is a beautiful house',
+//   thumbnail_photo_url: 'https://images.unsplash.com/photo-1556228724-1e0d58224c8e?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhdXRpZnVsJTIwaG91c2V8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80',
+//   cover_photo_url: 'https://images.unsplash.com/photo-1556228724-1e0d58224c8e?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhdXRpZnVsJTIwaG91c2V8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80',
+//   cost_per_night: 100,
+//   street: '123 Main St',
+//   city: 'Vancouver',
+//   province: 'BC',
+//   post_code: 'V6J 5B5',
+//   country: 'Canada',
+//   parking_spaces: 2,
+//   number_of_bathrooms: 2,
+//   number_of_bedrooms: 2
+// });
 
 module.exports = {
   getUserWithEmail,
