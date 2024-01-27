@@ -1,22 +1,10 @@
 const { query } = require("express");
 const properties = require("./json/properties.json");
 const users = require("./json/users.json");
+const pool = require("../db/index");
 
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  user: 'vagrant',
-  password: '123',
-  host: 'localhost',
-  database: 'lightbnb'
-});
-// pool.query(`SELECT * FROM properties LIMIT 10;`).then(response => {
-//   console.log(response);
-// });
 
 /// Users
-
-
 /**
  * Get a single user from the database given their email.
  * @param {String} email The email of the user.
@@ -67,14 +55,9 @@ const addUser = function (user) {
       console.log(err.message);
     });
 };
-// addUser({
-//   name: 'John',
-//   email: 'johnnnnn@gmail.com',
-//   password: '$2a$10$FB/BOAVhpuLvpOREQVmvmezD4ED/.JBIDRh70tGevYzYzQgFId2u.'
-// });
+
 
 /// Reservations
-
 /**
  * Get all reservations for a single user.
  * @param {string} guest_id The id of the user.
@@ -92,8 +75,8 @@ const getAllReservations = function(guest_id, limit = 10) {
     });
 };
 
-/// Properties
 
+/// Properties
 /**
  * Get all properties.
  * @param {{}} options An object containing query options.
@@ -102,20 +85,15 @@ const getAllReservations = function(guest_id, limit = 10) {
  */
 
 const getAllProperties = (options, limit = 10) => {
-  // 1
   const queryParams = [];
-  // 2
   let queryString = `
   SELECT properties.*, avg(property_reviews.rating) as average_rating
   FROM properties
   JOIN property_reviews ON properties.id = property_id
   `;
-  // 3
   if (options.city) {
     queryParams.push(`%${options.city}%`);
     queryString += `WHERE city LIKE $${queryParams.length}`;
-  } else {
-    queryString += `WHERE true`;
   }
   if (options.owner_id) {
     queryParams.push(options.owner_id);
@@ -133,25 +111,16 @@ const getAllProperties = (options, limit = 10) => {
     queryParams.push(options.minimum_rating);
     queryString += ` AND rating >= $${queryParams.length}`;
   }
-  // 4
   queryParams.push(limit);
   queryString += `
   GROUP BY properties.id
   ORDER BY cost_per_night
   LIMIT $${queryParams.length};
   `;
-  // 5
   console.log(queryString, queryParams);
-  // 6
   return pool.query(queryString, queryParams).then((res) => res.rows);
 };
-// getAllProperties({
-//   city: 'Vancouver',
-//   owner_id: 1,
-//   minimum_rating: 4,
-//   minimum_price_per_night: 100,
-//   maximum_price_per_night: 200
-// }, 10);
+
 
 /**
  * Add a property to the database
@@ -237,29 +206,8 @@ const addProperty = function(property) {
   queryString += `) RETURNING *;`;
   console.log(queryString, queryParams);
   return pool.query(queryString, queryParams).then((res) => res.rows);
-
-
-  // const propertyId = Object.keys(properties).length + 1;
-  // property.id = propertyId;
-  // properties[propertyId] = property;
-  // return Promise.resolve(property);
 };
-// addProperty({
-//   owner_id: 1,
-//   title: 'Beautiful House',
-//   description: 'This is a beautiful house',
-//   thumbnail_photo_url: 'https://images.unsplash.com/photo-1556228724-1e0d58224c8e?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhdXRpZnVsJTIwaG91c2V8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80',
-//   cover_photo_url: 'https://images.unsplash.com/photo-1556228724-1e0d58224c8e?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhdXRpZnVsJTIwaG91c2V8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80',
-//   cost_per_night: 100,
-//   street: '123 Main St',
-//   city: 'Vancouver',
-//   province: 'BC',
-//   post_code: 'V6J 5B5',
-//   country: 'Canada',
-//   parking_spaces: 2,
-//   number_of_bathrooms: 2,
-//   number_of_bedrooms: 2
-// });
+
 
 module.exports = {
   getUserWithEmail,

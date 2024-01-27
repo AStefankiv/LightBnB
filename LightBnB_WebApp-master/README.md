@@ -1,5 +1,9 @@
 # LightBnB
+The purpose of this project is to design a database and use server-side JavaScript to display the information from queries to web pages.
 
+This project will allow homeowners to rent out their homes to people on vacation, creating an alternative to hotels and bed and breakfasts. Users can view property information, book reservations, view their reservations, and write reviews.
+
+![Lighthouse_bnb_homepage](/light_bnb/media/Lighthouse_bnb%20-%20home_page.png:Zone.Identifier)
 ## Project Structure
 
 ```
