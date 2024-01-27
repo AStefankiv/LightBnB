@@ -3,13 +3,13 @@ The purpose of this project is to design a database and use server-side JavaScri
 
 This project will allow homeowners to rent out their homes to people on vacation, creating an alternative to hotels and bed and breakfasts. Users can view property information, book reservations, view their reservations, and write reviews.
 
-###Homepage
+### Homepage
 ![Lighthouse_bnb_homepage](/media/lhl_home.jpg)
 
-###Create listing page
+### Create listing page
 ![Lighthouse_bnb_homepage](/media/create_listing_page.jpg)
 
-###Search page
+### Search page
 ![Lighthouse_bnb_homepage](/media/search_page.jpg)
 
 ## Project Structure
